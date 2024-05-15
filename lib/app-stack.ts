@@ -1,16 +1,23 @@
-import * as cdk from 'aws-cdk-lib';
-import { Construct } from 'constructs';
+import * as cdk from "aws-cdk-lib";
+import * as dynamo from 'aws-cdk-lib/aws-dynamodb';
+import * as sqs from 'aws-cdk-lib/aws-sqs';
+import { Construct } from "constructs";
 // import * as sqs from 'aws-cdk-lib/aws-sqs';
 
 export class AppStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    // The code that defines your stack goes here
+    const storage = new dynamo.TableV2(this, "WeatherTrack", {
+      partitionKey: { name: "PK", type: dynamo.AttributeType.NUMBER },
+      sortKey: {
+        name: "epochTime",
+        type: dynamo.AttributeType.NUMBER,
+      },
+    });
 
-    // example resource
-    // const queue = new sqs.Queue(this, 'AppQueue', {
-    //   visibilityTimeout: cdk.Duration.seconds(300)
-    // });
+    const receiver = new sqs.Queue(this, "receivingQueue", {
+      queueName: "receiver",
+    });
   }
 }
