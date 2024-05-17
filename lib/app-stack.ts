@@ -14,10 +14,11 @@ export class AppStack extends cdk.Stack {
     })
 
     const intakeLambda = new lambda.Function(this, 'intakeLambda', {
-      runtime: lambda.Runtime.FROM_IMAGE,
-      code: lambda.Code.fromDockerBuild(``),
-      handler: 'hello'
-    })
+      runtime: lambda.Runtime.NODEJS_20_X,
+      code: lambda.Code.fromAsset(`${__dirname}/src/lambdas/intake`),
+      handler: 'index.hello'
+    });
+
     const storage = new dynamo.TableV2(this, "WeatherTrack", {
       partitionKey: { name: "PK", type: dynamo.AttributeType.NUMBER },
       sortKey: {
